@@ -5,7 +5,7 @@ name: flutter drive
 on: [push, pull_request]
 
 env:
-  flutter_version: "1.17.4"
+  flutter_version: "1.17.4" # If I was using flutterw this would need to be pulled from flutterw/version to keep things in sync
   CI: github-actions
 
 jobs:
@@ -35,25 +35,25 @@ jobs:
     
     - name: Checkout
       uses: actions/checkout@v2
+
+    - name: Setup Flutter Cache
+      uses: actions/cache@v2
+      with:
+        path: /Users/runner/hostedtoolcache/flutter
+        # The cache should reset when we update the version number: 
+        key: ${{ runner.OS }}-flutter-install-cache-${{ env.flutter_version }} 
+        restore-keys: ${{ runner.OS }}-flutter-install-cache-
     
     - name: Setup Flutter
       uses: subosito/flutter-action@40bc2f
       with:
         flutter-version: ${{ env.flutter_version }}
 
-    - name: Setup Flutter Cache
-      uses: actions/cache@v2
-      with:
-        path: $FLUTTER_HOME
-        # The cache should reset when we update the version number: 
-        key: ${{ runner.OS }}-flutter-install-cache-${{ env.flutter_version }} 
-        restore-keys: ${{ runner.OS }}-flutter-install-cache-
-    
     - name: Confirm Flutter version in use
-      run: cat $FLUTTER_HOME/version
+      run: cat $FLUTTER_HOME/version 
 
     - name: Install dependencies
-      run: flutter pub get
+      run: flutter pub get  
 
     - name: Run Flutter Driver tests
-      run: "flutter drive --target=test_driver/app.dart" 
+      run: "flutter drive --target=test_driver/app.dart"  
