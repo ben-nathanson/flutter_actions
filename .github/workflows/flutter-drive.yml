@@ -5,7 +5,7 @@ name: flutter drive
 on: [push, pull_request]
 
 env:
-  flutter_version: "1.17.4" # If I was using flutterw this would need to be pulled from flutterw/version to keep things in sync
+  flutter_version: "1.12.13+hotfix.8" # If I was using flutterw this would need to be pulled from flutterw/version to keep things in sync
   CI: github-actions
 
 jobs:
@@ -49,11 +49,11 @@ jobs:
       with:
         flutter-version: ${{ env.flutter_version }}
 
-    - name: Confirm Flutter version in use
-      run: cat $FLUTTER_HOME/version 
-
     - name: Install dependencies
       run: flutter pub get  
+
+    - name: Check Flutter Health
+      run: "flutter doctor"
 
     - name: Run Flutter Driver tests
       run: "flutter drive --target=test_driver/app.dart"  
