@@ -1,0 +1,44 @@
+name: flutter drive Android
+
+on: [push, pull_request]
+
+env:
+  flutter_version: "1.12.13+hotfix.8" # If I was using flutterw this would need to be pulled from flutterw/version to keep things in sync
+  CI: github-actions
+
+jobs:
+  drive:
+    timeout-minutes: 20 # Fail after 20 minutes.
+    runs-on: macos-10.15
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Setup Flutter Cache
+      uses: actions/cache@v2
+      with:
+        path: /Users/runner/hostedtoolcache/flutter
+        # The cache should reset when we update the version number: 
+        key: ${{ runner.OS }}-flutter-install-cache-${{ env.flutter_version }} 
+        restore-keys: ${{ runner.OS }}-flutter-install-cache-
+    
+    - name: Setup Flutter
+      uses: subosito/flutter-action@40bc2f
+      with:
+        flutter-version: ${{ env.flutter_version }}
+
+    - name: Install dependencies
+      run: flutter pub get  
+
+    - name: Check Flutter Health
+      run: "flutter doctor"
+
+    - name: Run Flutter Driver tests
+      uses: reactivecircus/android-emulator-runner@v1
+      with: 
+        api-level: 28
+        target: default
+        arch: x86_64
+        profile: Nexus 6
+        script: "flutter drive --target=test_driver/app.dart"  
