@@ -14,7 +14,10 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v2
-
+    
+    - name: Download MockServer from Maven
+      run: mvn dependency:get -Ddest=./ -Dartifact=org.mock-server:mockserver-netty:5.10
+      
     - name: Setup Flutter Cache
       uses: actions/cache@v2
       with:
